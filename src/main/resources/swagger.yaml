@@ -1,0 +1,308 @@
+openapi: 3.0.3
+info:
+  title: Swagger Users - OpenAPI 3.0
+  description: |-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: /api/v1
+tags:
+  - name: authentication
+    description: Operations about auth
+  - name: users
+    description: Operations about user
+  - name: profiles
+    description: Operations about profile
+paths:
+  /auth/authenticate:
+
+    post:
+      tags:
+        - authentication
+      summary: Get all users.
+      description: ''
+      operationId: authenticate
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthApiRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthApiResponse'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorApiResponse'
+  /auth/register:
+    post:
+      tags:
+        - authentication
+      summary: Create user
+      description: Create a user.
+      operationId: registerUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRegisterApiRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthApiResponse'
+  /auth/refresh-token:
+    post:
+      tags:
+        - authentication
+      summary: Refresh token
+      description: Refresh a token.
+      operationId: refreshToken
+      requestBody:
+        description: Refresh token request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenApiRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthApiResponse'
+  /users:
+    post:
+      tags:
+        - users
+      summary: Create user
+      description: Create a user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserApiRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserApiResponse'
+    get:
+      tags:
+        - users
+      summary: Get users
+      description: Get users.
+      operationId: getAllUsers
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserApiResponse'
+  /users/{id}:
+    put:
+      tags:
+        - users
+      summary: Update user
+      description: Update a user.
+      operationId: updateUserById
+      parameters:
+        - name: id
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateApiRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserApiResponse'
+    get:
+      tags:
+        - users
+      summary: Get user
+      description: Get user.
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserApiResponse'
+    delete:
+      tags:
+        - users
+      summary: Delete user
+      description: Delete user.
+      operationId: deleteUserById
+      parameters:
+        - name: id
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    AuthApiRequest:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login:
+          type: string
+          example: joao
+        password:
+          type: string
+          example: 123456
+    RefreshTokenApiRequest:
+      type: object
+      required:
+        - username
+        - name
+      properties:
+        refresh_token:
+          type: string
+          example: asdfjsdlfkjslkdfjsdlkfj
+    AuthRegisterApiRequest:
+      type: object
+      required:
+        - username
+        - name
+      properties:
+        username:
+          type: string
+          example: joao
+        email:
+          type: string
+          example: joao@gmail.com
+        password:
+          type: string
+          example: 123456
+    AuthApiResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3OD
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3OD
+    UserApiRequest:
+      type: object
+      required:
+        - username
+        - name
+      properties:
+        username:
+          type: string
+          example: myUser
+        email:
+          type: string
+          example: joao@gmail.com
+        password:
+          type: string
+          example: '12345'
+    UserUpdateApiRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: theUser
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+    UserApiResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: f0822b54-0720-11ee-be56-0242ac120002
+        username:
+          type: string
+          example: theUser
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+        role:
+          type: string
+          example: USER
+        createdAt:
+          type: string
+          example: 2023-07-02T23:26:02+0000
+        updatedAt:
+          type: string
+          example: 2023-07-02T23:26:02+0000
+    ErrorApiResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Erro message
+        messageDetail:
+          type: string
+          example: Erro message detail

@@ -1,6 +1,6 @@
 package com.devertelo.auth_api.application.config.security;
 
-import com.devertelo.auth_api.domain.UserResponse;
+import com.devertelo.auth_api.domain.users.UserResponse;
 import com.devertelo.auth_api.infrastructure.users.UserEntity;
 import com.devertelo.auth_api.infrastructure.users.UserMapper;
 import com.devertelo.auth_api.infrastructure.users.UserRepository;
@@ -26,7 +26,6 @@ public class AppUserDetailsService implements UserDetailsService {
                     String msgErro = format("Usuario %s não encontrado", username);
                     return new UsernameNotFoundException(msgErro);
                 });
-
 
         return userMapper.toUserResponse(userEntity);
     }

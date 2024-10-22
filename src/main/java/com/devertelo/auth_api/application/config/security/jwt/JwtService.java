@@ -1,6 +1,6 @@
 package com.devertelo.auth_api.application.config.security.jwt;
 
-import com.devertelo.auth_api.domain.UserResponse;
+import com.devertelo.auth_api.domain.users.UserResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -33,7 +33,7 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserResponse userDetails) { //TODO criar dominio para userDetails
+    public String generateToken(UserResponse userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
@@ -41,19 +41,19 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserResponse userDetails
     ) {
-        return buildToken(extraClaims, userDetails, jwtConfig.getTokenExpirationAfterDays());
+        return buildToken(extraClaims, userDetails, jwtConfig.getTokenExpirationInMinutes());
     }
 
     public String generateRefreshToken(
             UserResponse userDetails
     ) {
-        return buildToken(new HashMap<>(), userDetails, jwtConfig.getRefreshTokenExpirationAfterDays());
+        return buildToken(new HashMap<>(), userDetails, jwtConfig.getRefreshTokenExpirationInMinutes());
     }
 
     private String buildToken(
             Map<String, Object> extraClaims,
             UserResponse userDetails,
-            long expiration
+            Integer expirationInMinutes
     ) {
         return Jwts
                 .builder()
@@ -61,7 +61,7 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(Date.from(LocalDateTime.now()
-                        .plusDays(expiration)
+                        .plusMinutes(expirationInMinutes)
                         .atZone(ZoneId.systemDefault())
                         .toInstant()))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -73,6 +73,11 @@ public class JwtService {
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }
+
+    public boolean isInvalidToken(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (!username.equals(userDetails.getUsername())) && isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

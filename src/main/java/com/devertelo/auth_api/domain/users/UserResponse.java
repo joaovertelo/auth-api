@@ -1,5 +1,6 @@
-package com.devertelo.auth_api.domain;
+package com.devertelo.auth_api.domain.users;
 
+import com.devertelo.auth_api.domain.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

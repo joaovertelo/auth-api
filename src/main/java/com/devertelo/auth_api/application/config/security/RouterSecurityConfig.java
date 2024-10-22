@@ -20,6 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class RouterSecurityConfig {
 
+    private static final String[] SWAGGER_LIST_URL = {"/v3/api-docs/**", "/swagger-ui/**", "/auth/**"};
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
 
@@ -29,14 +31,14 @@ public class RouterSecurityConfig {
         httpSecurity
                 .csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                                .anyRequest()
-                                .permitAll()
-//                                .requestMatchers("/v3/api-docs/**").permitAll()
-//                                .requestMatchers("/swagger-ui/**").permitAll()
-//                                .requestMatchers("/auth/**").permitAll()
-//                                .requestMatchers(HttpMethod.POST, "/users").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/users/admin").hasAnyAuthority(UserRole.ADMIN.name())
-//                                .anyRequest().authenticated()
+                        .requestMatchers(SWAGGER_LIST_URL)
+                        .permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/users")
+//                        .permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/users/admin")
+//                        .hasAnyAuthority(UserRole.ADMIN.name())
+                        .anyRequest()
+                        .authenticated()
                 )
                 .sessionManagement(
                         sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
